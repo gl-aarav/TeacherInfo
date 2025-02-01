@@ -24,8 +24,8 @@
  * 	 - Asks user for the course Number
  *	 - Sends the user input to decideNumbers()
  * 
- * 	readIt()
- * 	 - Looks for the File and reads it, if can't find file throw error using try...catch method
+ * 	openIt()
+ * 	 - Looks for the File and opens it, if can't find file throw error using try...catch method
  * 
  * decideNumbers()
  * 	 - Starts looking for a letter after "Teacher:" stores everything into teacherData[1] until the String ends and it reaches "Class:"
@@ -66,6 +66,57 @@
 	}
 	
 	public static void main(String[] args)
+	{
+		TeacherInfo ti = new TeacherInfo();
+		ti.runIt();
+	}
+	
+	public void runIt()
+	{
+		askUser();
+	}
+	
+	public void askUser()
+	{
+		Scanner in = new Scanner(System.in);
+		String inFileName = new String("");
+		int courseNum = 0;
+		System.out.print("Please enter the name of the teacher’s file including the extension: ");
+		inFileName = in.nextLine();
+		System.out.println("Please enter the course number for data you would like: ");
+		courseNum = in.nextInt();
+		openIt(in, inFileName);
+	}
+	
+	public void openIt(Scanner in, String inFileName)
+	{
+		File inFile = new File(inFileName);
+		try
+		{
+			in = new Scanner(inFile);
+		}
+		catch (FileNotFoundException e)
+		{
+			System.err.printf("\n\n\nERROR: Cannot find/open file %s.\n\n\n", inFileName);
+			System.exit(1);
+		}
+	}
+	
+	public void decideNumbers()
+	{
+		
+	}
+	public void makeIt()
+	{
+		
+	}
+	
+	public void printItConsole()
+	{
+		
+	}
+	
+	public void printItTXT()
 	{
 		
 	}
