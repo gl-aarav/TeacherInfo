@@ -1,3 +1,4 @@
+
 /*
  * 1/31/2025
  * TeacherInfo.java
@@ -28,11 +29,9 @@
  * 	 - Looks for the File and opens it, if can't find file throw error using try...catch method
  * 
  * decideNumbers()
- * 	 - Starts looking for a letter after "Teacher:" stores everything into teacherData[1] until the String ends and it reaches "Class:"
- * 		 - use .trim() method
- * 	 - Starts looking for a letter after "Class:" stores everything into teacherData[2] until the String ends and it reaches a space
- *   - Starts looking for a letter after course name stores everything into teacherData[3] until the String ends and it reaches "Room:"
- * 		 - use.trim() method
+ * 	 - Stores the words after "Teacher:" stores everything into teacherData[0] until the String ends and it reaches "Class:"
+ * 	 - Stores the words after "Class:" stores the course name into teacherData[1]
+ *   - Stores the words after course name stores everything into teacherData[2] until the String ends and it reaches "Room:"
  * 
  * 	 - Put the grades into the correct place in the array
  * 	 	- First, decide where to add the number in scores[]
@@ -100,11 +99,31 @@
 			System.err.printf("\n\n\nERROR: Cannot find/open file %s.\n\n\n", inFileName);
 			System.exit(1);
 		}
+		decideNumbers(in);
 	}
 	
-	public void decideNumbers()
+	public void decideNumbers(Scanner in)
 	{
-		
+		String token, token1 = new String ("");
+		while (in.hasNext())
+		{ 
+			token = in.next();
+			if (token.equals("Teacher:"))
+			{
+				
+				while (in.hasNext())
+				{
+					token1 = in.next();
+					if (!token.equals("Class:"))
+						teacherData[0].concat(token1);
+				}
+			}
+			else if (token.equals("Class:"))
+			{
+				
+			}
+				
+		}
 	}
 	public void makeIt()
 	{
