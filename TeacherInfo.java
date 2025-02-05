@@ -1,4 +1,3 @@
-
 /*
  * 1/31/2025
  * TeacherInfo.java
@@ -111,11 +110,10 @@
 			if (token.equals("Teacher:"))
 			{
 				
-				while (in.hasNext())
+				while (in.hasNext() && !token.equals("Class:"))
 				{
 					token1 = in.next();
-					if (!token.equals("Class:"))
-						teacherData[0].concat(token1);
+					teacherData[0].concat(token1 + " ");
 				}
 			}
 			else if (token.equals("Class:"))
