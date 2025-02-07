@@ -1,7 +1,7 @@
 /*
  * 1/31/2025
  * TeacherInfo.java
- * Hello
+ * 
  * Pseudocode
  * 
  *  import Scannner and java.io.*
