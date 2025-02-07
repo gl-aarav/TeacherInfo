@@ -1,3 +1,4 @@
+
 /*
  * 1/31/2025
  * TeacherInfo.java
@@ -81,7 +82,7 @@ public class TeacherInfo
 		Scanner in = new Scanner(System.in);
 		String inFileName = "";
 		String courseNum = "";
-		System.out.print("Please enter the name of the teacher’s file including the extension: ");
+		System.out.print("\n\n\nPlease enter the name of the teacher’s file including the extension: ");
 		inFileName = in.nextLine();
 		System.out.print("Please enter the course number for data you would like: ");
 		courseNum = in.next();
@@ -107,62 +108,63 @@ public class TeacherInfo
 
 	public void decideNumbers(Scanner in, String courseNumber, String inFileName)
 	{	
-		String token, token1 = new String ("");
-		while (in.hasNext())
+		String token = new String (""), token1 = new String ("");
+		
+		token = in.next();
+		token1 = in.next();
+			
+		while (in.hasNext() && !token1.equals("Class:"))
 		{
-			token = in.next();
-			if (courseNumber.equals(token.substring(0,token1.length()-2)))
+				teacherData[0]  = teacherData[0] + token1 + " ";
+				token1 = in.next();
+		}
+	
+		while (in.hasNext() && courseNumber.equals(teacherData[1]))
+		{
+		
+			if (token1.equals("Class:"))
 			{
-				while (in.hasNext())
+				token1 = in.next();		
+				courseNumber = token1.substring(0, token1.length() - 2);
+				token1 = in.next();
+				
+				if (courseNumber.equals(teacherData[1]))
 				{
-					if (token.equals("Teacher:"))
+					while (in.hasNext() && !token1.equals("Room:"))
 					{
-						in.next();
-						while (in.hasNext() && !token1.equals("Class:"))
-						{
-							teacherData[0]  = teacherData[0] + token1 + " ";
-							token1 = in.next();
-						}
-					}
-
-					else if (token.equals("Class:"))
-					{
-						token1 = in.next();		
-						courseNumber = token1.substring(0,token1.length()-2);
-						while (in.hasNext() && !token1.equals("Room:"))
-						{
-							token1 = in.next();
-							teacherData[2] = teacherData[2] + token1 + " ";
-						}
-					}
-					else if (token.equals("Scores:"))
-					{
-						while (in.hasNext() && !token1.equals("Teacher:"))
-						{
-							token1 = in.next();
-							if (!token1.equals("Teacher:"))
-							{
-								double temp = Double.parseDouble(token1);
-								scores[(int)temp]++;
-								if (temp >= 90)
-									grades[0]++;
-								else if (temp >= 80 && temp <= 89)
-									grades[1]++;
-								else if (temp >= 70 && temp <= 79)
-									grades[2]++;
-								else if (temp >= 60 && temp <= 69)
-									grades[3]++;
-								else
-									grades[4]++;
-							}
-						}
+						teacherData[2] = teacherData[2] + token1 + " ";
+						token1 = in.next();
 					}
 				}
 			}
+				
+			if (token1.equals("Scores:"))
+			{
+				token1 = in.next();
+				while (in.hasNext() && !token1.equals("Teacher:"))
+				{
+					
+					double temp = Double.parseDouble(token1);
+					scores[(int)temp]++;
+					if (temp >= 90)
+						grades[0]++;
+					else if (temp >= 80 && temp <= 89)
+						grades[1]++;
+					else if (temp >= 70 && temp <= 79)
+						grades[2]++;
+					else if (temp >= 60 && temp <= 69)
+						grades[3]++;
+					else
+						grades[4]++;
+					token1 = in.next();
+				}
+			}
+			token1 = in.next();
 		}
-
+		if (!courseNumber.equals(teacherData[1]))
+			errorPrint(inFileName);
 	}
-
+	
 	public void makeIt(String outFileName)
 	{
 		PrintWriter output = null;
@@ -178,7 +180,6 @@ public class TeacherInfo
 		}	
 		printItConsole();
 		printItTXT(output);
-		output.close();
 	}
 
 	public void printItConsole()
@@ -188,7 +189,7 @@ public class TeacherInfo
 			total += scores[i];
 
 		int printALine = 0;
-		System.out.println("Teacher Name: " + teacherData[0]);
+		System.out.println("\nTeacher Name: " + teacherData[0]);
 		System.out.println("Course Number: " + teacherData[1]);
 		System.out.println("Course Name: " + teacherData[2]);
 
@@ -209,11 +210,20 @@ public class TeacherInfo
 				}
 			}
 		}
-		System.out.println("\nA (90-100): " + grades[0] + "\t" + (double)grades[0]/total);
-		System.out.println("B (80-89): " + grades[1] + "\t" + (double)grades[1]/total);
-		System.out.println("C (70-79): " + grades[2] + "\t" + (double)grades[2]/total);
-		System.out.println("D (60-69): " + grades[3] + "\t" + (double)grades[3]/total);
-		System.out.println("F (0-59): " + grades[4] + "\t" + (double)grades[4]/total);
+		System.out.print("\nA (90-100): " + grades[0] + "\t");
+		System.out.printf("%2f\n",(double)grades[0]/total);
+		
+		System.out.print("B (80-89): " + grades[1] + "\t");
+		System.out.printf("%2f\n",(double)grades[1]/total);
+		
+		System.out.print("C (70-79): " + grades[2] + "\t");
+		System.out.printf("%2f\n",(double)grades[2]/total);
+		
+		System.out.print("D (60-69): " + grades[3] + "\t");
+		System.out.printf("%2f\n",(double)grades[3]/total);
+		
+		System.out.print("F (0-59): " + grades[4] + "\t");
+		System.out.printf("%2f\n",(double)grades[4]/total);
 
 		System.out.println("\n\n\n");
 	}
@@ -264,6 +274,7 @@ public class TeacherInfo
 			System.err.println("\n\n\nERROR: Cannot write to file.\n\n\n");
 			System.exit(3);
 		}
+		output.close();
 	}
 
 	public void errorPrint(String fileName)
