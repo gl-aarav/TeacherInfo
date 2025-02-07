@@ -46,13 +46,13 @@
  * printItTXT()
  *  - prints the data to the txt file
  */ 
- 
- 
- import java.util.Scanner;
- import java.io.*;
- 
- public class TeacherInfo
- {
+
+
+import java.util.Scanner;
+import java.io.*;
+
+public class TeacherInfo
+{
 	private int[] scores;
 	private int[] grades;
 	private String[] teacherData;
@@ -62,18 +62,18 @@
 		grades = new int[5];
 		teacherData = new String[3];
 	}
-	
+
 	public static void main(String[] args)
 	{
 		TeacherInfo ti = new TeacherInfo();
 		ti.runIt();
 	}
-	
+
 	public void runIt()
 	{
 		askUser();
 	}
-	
+
 	public void askUser()
 	{
 		Scanner in = new Scanner(System.in);
@@ -81,12 +81,12 @@
 		int courseNum = 0;
 		System.out.print("Please enter the name of the teacher’s file including the extension: ");
 		inFileName = in.nextLine();
-		System.out.println("Please enter the course number for data you would like: ");
+		System.out.print("Please enter the course number for data you would like: ");
 		courseNum = in.nextInt();
 		openIt(in, inFileName);
 		makeIt(inFileName.substring(0,inFileName.length()-4).concat("-results.txt"));
 	}
-	
+
 	public void openIt(Scanner in, String inFileName)
 	{
 		File inFile = new File(inFileName);
@@ -101,7 +101,7 @@
 		}
 		decideNumbers(in);
 	}
-	
+
 	public void decideNumbers(Scanner in)
 	{
 		String token, token1 = new String ("");
@@ -113,7 +113,7 @@
 				while (in.hasNext() && !token1.equals("Class:"))
 				{
 					token1 = in.next();
-					teacherData[0].concat(token1 + " ");
+					teacherData[0]  = teacherData[0] + token1;
 				}
 			}
 			else if (token.equals("Class:"))
@@ -123,7 +123,7 @@
 				while (in.hasNext() && !token1.equals("Room:"))
 				{
 					token1 = in.next();
-					teacherData[2].concat(token1 + " ");
+					teacherData[2] = teacherData[2] + token1;
 				}
 			}
 			else if (token.equals("Scores:"))
@@ -131,22 +131,26 @@
 				while (in.hasNext() && !token1.equals("Teacher:"))
 				{
 					token1 = in.next();
-					int temp = (int)Double.parseDouble(token1);
-					scores[temp]++;
-					if (temp >= 90)
-						grades[0]++;
-					else if (temp >= 80 && temp <= 89)
-						grades[1]++;
-					else if (temp >= 70 && temp <= 79)
-						grades[2]++;
-					else if (temp >= 60 && temp <= 69)
-						grades[3]++;
-					else
-						grades[4]++;
+					if (!token1.equals("Teacher:"))
+					{
+						double temp = Double.parseDouble(token1);
+						scores[(int)temp]++;
+						if (temp >= 90)
+							grades[0]++;
+						else if (temp >= 80 && temp <= 89)
+							grades[1]++;
+						else if (temp >= 70 && temp <= 79)
+							grades[2]++;
+						else if (temp >= 60 && temp <= 69)
+							grades[3]++;
+						else
+							grades[4]++;
+					}
 				}
 			}
 		}
 	}
+
 	public void makeIt(String outFileName)
 	{
 		PrintWriter output = null;
@@ -160,20 +164,23 @@
 			System.err.println("\n\n\nERROR: Cannot create " + outFileName + " file.\n\n\n");
 			System.exit(2);
 		}	
+		printItConsole();
+		printItTXT(output);
+		output.close();
 	}
-	
+
 	public void printItConsole()
 	{
 		int total = 0;
 		for (int i = 0; i < scores.length; i++)
 			total += scores[i];
-			
+
 		int printALine = 0;
 		System.out.println("\n\nTeacher Information:");
 		System.out.println("Teacher Name: " + teacherData[0]);
 		System.out.println("Course Number: " + teacherData[1]);
 		System.out.println("Course Name: " + teacherData[2]);
-		
+
 		System.out.println("\nScores Distribution (high to low):");
 		for (int i = scores.length - 1; i >= 0; i--)
 		{
@@ -197,32 +204,31 @@
 		System.out.println("C (70-79): " + grades[2] + "\t" + (double)grades[2]/total);
 		System.out.println("D (60-69): " + grades[3] + "\t" + (double)grades[3]/total);
 		System.out.println("F (0-59): " + grades[4] + "\t" + (double)grades[4]/total);
-		
+
 		System.out.println("\n\n\n");
 	}
 
-	public void printItTXT()
+	public void printItTXT(PrintWriter output)
 	{
 		int total = 0;
 		for (int i = 0; i < scores.length; i++)
 			total += scores[i];
-			
-		PrintWriter output = null;
+
 		try
 		{
 			output = new PrintWriter("TeacherInfo-results.txt");
-        
+
 			output.println("\n\nTeacher Information:");
 			output.println("Teacher Name: " + teacherData[0]);
 			output.println("Course Number: " + teacherData[1]);
 			output.println("Course Name: " + teacherData[2]);
-	
+
 			for (int i = scores.length; i >= 0; i--)
 			{
 				if (i/10 < (i-1)/10)
 					System.out.println();
 			}
-	
+
 			output.println("\nGrades Distribution (Total number of each letter grade and percentage): ");
 			output.println("A (90-100): " + grades[0] + "\t" + (double)grades[0]/total);
 			output.println("B (80-89): " + grades[1] + "\t" + (double)grades[1]/total);
@@ -232,11 +238,11 @@
 
 			output.close();
 		}
-    
+
 		catch (IOException e)
 		{
 			System.err.println("\n\n\nERROR: Cannot write to file.\n\n\n");
 			System.exit(3);
 		}
 	}
- }
+}

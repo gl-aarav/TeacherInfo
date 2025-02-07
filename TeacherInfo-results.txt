@@ -1,0 +1,13 @@
+
+
+Teacher Information:
+Teacher Name: nullElmerJ.FuddClass:
+Course Number: 2370
+Course Name: nullAPCalculusBCRoom:APCalculusBCRoom:CompProgJavaRoom:CompProgJavaRoom:
+
+Grades Distribution (Total number of each letter grade and percentage): 
+A (90-100): 40	0.41237113402061853
+B (80-89): 23	0.23711340206185566
+C (70-79): 13	0.13402061855670103
+D (60-69): 7	0.07216494845360824
+F (0-59): 14	0.14432989690721648
