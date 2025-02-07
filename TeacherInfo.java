@@ -83,11 +83,11 @@ public class TeacherInfo
 		inFileName = in.nextLine();
 		System.out.print("Please enter the course number for data you would like: ");
 		courseNum = in.nextInt();
-		openIt(in, inFileName);
+		openIt(in, inFileName, courseNum);
 		makeIt(inFileName.substring(0,inFileName.length()-4).concat("-results.txt"));
 	}
 
-	public void openIt(Scanner in, String inFileName)
+	public void openIt(Scanner in, String inFileName, int courseNum)
 	{
 		File inFile = new File(inFileName);
 		try
@@ -99,10 +99,10 @@ public class TeacherInfo
 			System.err.printf("\n\n\nERROR: Cannot find/open file %s.\n\n\n", inFileName);
 			System.exit(1);
 		}
-		decideNumbers(in);
+		decideNumbers(in, courseNum, inFileName);
 	}
 
-	public void decideNumbers(Scanner in)
+	public void decideNumbers(Scanner in, int courseNum, String inFileName)
 	{
 		String token, token1 = new String ("");
 		while (in.hasNext())
@@ -113,17 +113,18 @@ public class TeacherInfo
 				while (in.hasNext() && !token1.equals("Class:"))
 				{
 					token1 = in.next();
-					teacherData[0]  = teacherData[0] + token1;
+					teacherData[0]  = teacherData[0] + token1 + " ";
 				}
 			}
 			else if (token.equals("Class:"))
 			{
 				token1 = in.next();
 				teacherData[1] = token1.substring(0,token1.length()-2);
+				
 				while (in.hasNext() && !token1.equals("Room:"))
 				{
 					token1 = in.next();
-					teacherData[2] = teacherData[2] + token1;
+					teacherData[2] = teacherData[2] + token1 + " ";
 				}
 			}
 			else if (token.equals("Scores:"))
@@ -149,6 +150,8 @@ public class TeacherInfo
 				}
 			}
 		}
+		if (!teacherData[1].equals(courseNum))
+			errorPrint(inFileName);
 	}
 
 	public void makeIt(String outFileName)
@@ -176,7 +179,6 @@ public class TeacherInfo
 			total += scores[i];
 
 		int printALine = 0;
-		System.out.println("\n\nTeacher Information:");
 		System.out.println("Teacher Name: " + teacherData[0]);
 		System.out.println("Course Number: " + teacherData[1]);
 		System.out.println("Course Name: " + teacherData[2]);
@@ -198,8 +200,7 @@ public class TeacherInfo
 				}
 			}
 		}
-		System.out.println("\nGrades Distribution (number and percent): ");
-		System.out.println("A (90-100): " + grades[0] + "\t" + (double)grades[0]/total);
+		System.out.println("\nA (90-100): " + grades[0] + "\t" + (double)grades[0]/total);
 		System.out.println("B (80-89): " + grades[1] + "\t" + (double)grades[1]/total);
 		System.out.println("C (70-79): " + grades[2] + "\t" + (double)grades[2]/total);
 		System.out.println("D (60-69): " + grades[3] + "\t" + (double)grades[3]/total);
@@ -223,14 +224,13 @@ public class TeacherInfo
 			output.println("Course Number: " + teacherData[1]);
 			output.println("Course Name: " + teacherData[2]);
 
-			for (int i = scores.length; i >= 0; i--)
+			for (int i = scores.length-1; i >= 0; i--)
 			{
+				output.println(scores[i]);
 				if (i/10 < (i-1)/10)
 					System.out.println();
 			}
-
-			output.println("\nGrades Distribution (Total number of each letter grade and percentage): ");
-			output.println("A (90-100): " + grades[0] + "\t" + (double)grades[0]/total);
+			output.println("\nA (90-100): " + grades[0] + "\t" + (double)grades[0]/total);
 			output.println("B (80-89): " + grades[1] + "\t" + (double)grades[1]/total);
 			output.println("C (70-79): " + grades[2] + "\t" + (double)grades[2]/total);
 			output.println("D (60-69): " + grades[3] + "\t" + (double)grades[3]/total);
@@ -245,4 +245,10 @@ public class TeacherInfo
 			System.exit(3);
 		}
 	}
+
+	public void errorPrint(String fileName)
+	{
+		System.err.println("The course number does not exist in \""+ fileName + "\"");
+	}
 }
+
