@@ -71,23 +71,26 @@ public class TeacherInfo
 
 	public void runIt()
 	{
+		for (int i = 0; i < teacherData.length; i++)
+			teacherData[i] = "";
 		askUser();
 	}
 
 	public void askUser()
 	{
 		Scanner in = new Scanner(System.in);
-		String inFileName = new String("");
-		int courseNum = 0;
+		String inFileName = "";
+		String courseNum = "";
 		System.out.print("Please enter the name of the teacher’s file including the extension: ");
 		inFileName = in.nextLine();
 		System.out.print("Please enter the course number for data you would like: ");
-		courseNum = in.nextInt();
+		courseNum = in.next();
+		teacherData[1] = courseNum;
 		openIt(in, inFileName, courseNum);
 		makeIt(inFileName.substring(0,inFileName.length()-4).concat("-results.txt"));
 	}
 
-	public void openIt(Scanner in, String inFileName, int courseNum)
+	public void openIt(Scanner in, String inFileName, String courseNum)
 	{
 		File inFile = new File(inFileName);
 		try
@@ -102,56 +105,62 @@ public class TeacherInfo
 		decideNumbers(in, courseNum, inFileName);
 	}
 
-	public void decideNumbers(Scanner in, int courseNum, String inFileName)
-	{
+	public void decideNumbers(Scanner in, String courseNumber, String inFileName)
+	{	
 		String token, token1 = new String ("");
 		while (in.hasNext())
-		{ 
+		{
 			token = in.next();
-			if (token.equals("Teacher:"))
+			if (courseNumber.equals(token.substring(0,token1.length()-2)))
 			{
-				while (in.hasNext() && !token1.equals("Class:"))
+				while (in.hasNext())
 				{
-					token1 = in.next();
-					teacherData[0]  = teacherData[0] + token1 + " ";
-				}
-			}
-			else if (token.equals("Class:"))
-			{
-				token1 = in.next();
-				teacherData[1] = token1.substring(0,token1.length()-2);
-				
-				while (in.hasNext() && !token1.equals("Room:"))
-				{
-					token1 = in.next();
-					teacherData[2] = teacherData[2] + token1 + " ";
-				}
-			}
-			else if (token.equals("Scores:"))
-			{
-				while (in.hasNext() && !token1.equals("Teacher:"))
-				{
-					token1 = in.next();
-					if (!token1.equals("Teacher:"))
+					if (token.equals("Teacher:"))
 					{
-						double temp = Double.parseDouble(token1);
-						scores[(int)temp]++;
-						if (temp >= 90)
-							grades[0]++;
-						else if (temp >= 80 && temp <= 89)
-							grades[1]++;
-						else if (temp >= 70 && temp <= 79)
-							grades[2]++;
-						else if (temp >= 60 && temp <= 69)
-							grades[3]++;
-						else
-							grades[4]++;
+						in.next();
+						while (in.hasNext() && !token1.equals("Class:"))
+						{
+							teacherData[0]  = teacherData[0] + token1 + " ";
+							token1 = in.next();
+						}
+					}
+
+					else if (token.equals("Class:"))
+					{
+						token1 = in.next();		
+						courseNumber = token1.substring(0,token1.length()-2);
+						while (in.hasNext() && !token1.equals("Room:"))
+						{
+							token1 = in.next();
+							teacherData[2] = teacherData[2] + token1 + " ";
+						}
+					}
+					else if (token.equals("Scores:"))
+					{
+						while (in.hasNext() && !token1.equals("Teacher:"))
+						{
+							token1 = in.next();
+							if (!token1.equals("Teacher:"))
+							{
+								double temp = Double.parseDouble(token1);
+								scores[(int)temp]++;
+								if (temp >= 90)
+									grades[0]++;
+								else if (temp >= 80 && temp <= 89)
+									grades[1]++;
+								else if (temp >= 70 && temp <= 79)
+									grades[2]++;
+								else if (temp >= 60 && temp <= 69)
+									grades[3]++;
+								else
+									grades[4]++;
+							}
+						}
 					}
 				}
 			}
 		}
-		if (!teacherData[1].equals(courseNum))
-			errorPrint(inFileName);
+
 	}
 
 	public void makeIt(String outFileName)
@@ -211,6 +220,7 @@ public class TeacherInfo
 
 	public void printItTXT(PrintWriter output)
 	{
+		int printALine = 0;
 		int total = 0;
 		for (int i = 0; i < scores.length; i++)
 			total += scores[i];
@@ -224,11 +234,21 @@ public class TeacherInfo
 			output.println("Course Number: " + teacherData[1]);
 			output.println("Course Name: " + teacherData[2]);
 
-			for (int i = scores.length-1; i >= 0; i--)
+			for (int i = scores.length - 1; i >= 0; i--)
 			{
-				output.println(scores[i]);
-				if (i/10 < (i-1)/10)
-					System.out.println();
+				for (int y = 100; y < scores[i]; y--)
+				{
+					if (printALine == 15)
+					{
+						output.printf("\n%5d", y);
+						printALine = 0;
+					}
+					else
+					{
+						output.printf("%-5d", y);
+						printALine++;
+					}
+				}
 			}
 			output.println("\nA (90-100): " + grades[0] + "\t" + (double)grades[0]/total);
 			output.println("B (80-89): " + grades[1] + "\t" + (double)grades[1]/total);
