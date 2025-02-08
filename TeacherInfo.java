@@ -111,7 +111,7 @@ public class TeacherInfo
 		boolean print = false;
 		int sections = 0;
 
-		token = in.next();
+		
 		token1 = in.next();
 
 		while (in.hasNext() && !token1.equals("Class:"))
@@ -120,7 +120,7 @@ public class TeacherInfo
 			token1 = in.next();
 		}
 
-		while (in.hasNext() && courseNumber.equals(teacherData[1]))
+		while (in.hasNext())
 		{
 
 			if (token1.equals("Class:"))
@@ -142,7 +142,7 @@ public class TeacherInfo
 				}
 			}
 
-			if (token1.equals("Scores:"))
+			else if (token1.equals("Scores:"))
 			{
 				token1 = in.next();
 				while (in.hasNext() && !token1.equals("Teacher:"))

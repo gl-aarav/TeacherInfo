@@ -1,5 +1,3 @@
-
-
 Teacher Information:
 Teacher Name: Elmer J. Fudd 
 Course Number: 2440	Course Name: AP Calculus BC 
