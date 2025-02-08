@@ -88,7 +88,6 @@ public class TeacherInfo
 		courseNum = in.next();
 		teacherData[1] = courseNum;
 		openIt(in, inFileName, courseNum);
-		makeIt(inFileName.substring(0,inFileName.length()-4).concat("-results.txt"));
 	}
 
 	public void openIt(Scanner in, String inFileName, String courseNum)
@@ -109,41 +108,46 @@ public class TeacherInfo
 	public void decideNumbers(Scanner in, String courseNumber, String inFileName)
 	{	
 		String token = new String (""), token1 = new String ("");
-		
+		boolean print = false;
+		int sections = 0;
+
 		token = in.next();
 		token1 = in.next();
-			
+
 		while (in.hasNext() && !token1.equals("Class:"))
 		{
-				teacherData[0]  = teacherData[0] + token1 + " ";
-				token1 = in.next();
+			teacherData[0]  = teacherData[0] + token1 + " ";
+			token1 = in.next();
 		}
-	
+
 		while (in.hasNext() && courseNumber.equals(teacherData[1]))
 		{
-		
+
 			if (token1.equals("Class:"))
 			{
 				token1 = in.next();		
 				courseNumber = token1.substring(0, token1.length() - 2);
 				token1 = in.next();
-				
-				if (courseNumber.equals(teacherData[1]))
+
+				if (courseNumber.equals(teacherData[1]) && teacherData[2].equals(""))
 				{
+					sections++;
 					while (in.hasNext() && !token1.equals("Room:"))
 					{
 						teacherData[2] = teacherData[2] + token1 + " ";
 						token1 = in.next();
+
 					}
+					print = true;
 				}
 			}
-				
+
 			if (token1.equals("Scores:"))
 			{
 				token1 = in.next();
 				while (in.hasNext() && !token1.equals("Teacher:"))
 				{
-					
+
 					double temp = Double.parseDouble(token1);
 					scores[(int)temp]++;
 					if (temp >= 90)
@@ -161,11 +165,13 @@ public class TeacherInfo
 			}
 			token1 = in.next();
 		}
-		if (!courseNumber.equals(teacherData[1]))
+		if (print)
+			makeIt(inFileName.substring(0,inFileName.length()-4) + "-results.txt", sections);
+		else
 			errorPrint(inFileName);
 	}
-	
-	public void makeIt(String outFileName)
+
+	public void makeIt(String outFileName, int sections)
 	{
 		PrintWriter output = null;
 		File outFile = new File(outFileName);
@@ -178,58 +184,59 @@ public class TeacherInfo
 			System.err.println("\n\n\nERROR: Cannot create " + outFileName + " file.\n\n\n");
 			System.exit(2);
 		}	
-		printItConsole();
-		printItTXT(output);
+		printItConsole(output, sections);
 	}
 
-	public void printItConsole()
+	public void printItConsole(PrintWriter output, int sections)
 	{
-		int total = 0;
+		int total = -1, scoresNum = 0;
 		for (int i = 0; i < scores.length; i++)
 			total += scores[i];
+		for (int i = scores.length - 1; i >= 0; i--)
+		{
+			for (int y = scores[i]; y >= 0; y--)
+			{
+				scoresNum++;
+			}
+		}
 
 		int printALine = 0;
 		System.out.println("\nTeacher Name: " + teacherData[0]);
-		System.out.println("Course Number: " + teacherData[1]);
-		System.out.println("Course Name: " + teacherData[2]);
+		System.out.println("Course Number: " + teacherData[1] + "\tCourse Name: " + teacherData[2]);
+		System.out.println("Number of sections: " + sections);
+		System.out.println("Total # of Scores: " + scoresNum);
 
-		System.out.println("\nScores Distribution (high to low):");
+		System.out.println("\nScores (high to low):");
 		for (int i = scores.length - 1; i >= 0; i--)
 		{
-			for (int y = 100; y < scores[i]; y--)
+			for (int y = scores[i]; y >= 0; y--)
 			{
 				if (printALine == 15)
 				{
-					System.out.printf("\n%5d", y);
+					System.out.printf("\n%5d", i);
 					printALine = 0;
 				}
 				else
 				{
-					System.out.printf("%-5d", y);
+					System.out.printf("%5d", i);
 					printALine++;
 				}
 			}
 		}
-		System.out.print("\nA (90-100): " + grades[0] + "\t");
-		System.out.printf("%2f\n",(double)grades[0]/total);
-		
-		System.out.print("B (80-89): " + grades[1] + "\t");
-		System.out.printf("%2f\n",(double)grades[1]/total);
-		
-		System.out.print("C (70-79): " + grades[2] + "\t");
-		System.out.printf("%2f\n",(double)grades[2]/total);
-		
-		System.out.print("D (60-69): " + grades[3] + "\t");
-		System.out.printf("%2f\n",(double)grades[3]/total);
-		
-		System.out.print("F (0-59): " + grades[4] + "\t");
-		System.out.printf("%2f\n",(double)grades[4]/total);
+
+		System.out.printf("\n\nA (90-100): %2d\t%2f%%\n", grades[0], (double)grades[0]/total);
+		System.out.printf("B (80-89): %2d\t%2f%%\n", grades[1], (double)grades[1]/total);
+		System.out.printf("C (70-79): %2d\t%2f%%\n", grades[2], (double)grades[2]/total);
+		System.out.printf("D (60-69): %2d\t%2f%%\n", grades[3], (double)grades[3]/total);
+		System.out.printf("F (0-59): %2d\t%2f%%\n", grades[4], (double)grades[4]/total);
 
 		System.out.println("\n\n\n");
+		printItTXT(output, scoresNum, sections);
 	}
 
-	public void printItTXT(PrintWriter output)
+	public void printItTXT(PrintWriter output, int scoresNum, int sections)
 	{
+		boolean print = true;
 		int printALine = 0;
 		int total = 0;
 		for (int i = 0; i < scores.length; i++)
@@ -239,32 +246,38 @@ public class TeacherInfo
 		{
 			output = new PrintWriter("TeacherInfo-results.txt");
 
-			output.println("\n\nTeacher Information:");
+			output.println("Teacher Information:");
 			output.println("Teacher Name: " + teacherData[0]);
-			output.println("Course Number: " + teacherData[1]);
-			output.println("Course Name: " + teacherData[2]);
+			output.println("Course Number: " + teacherData[1] + "\tCourse Name: " + teacherData[2]);
+			output.println("Number of sections: " + sections);
+			output.println("Total # of Scores: " + scoresNum);
 
 			for (int i = scores.length - 1; i >= 0; i--)
 			{
-				for (int y = 100; y < scores[i]; y--)
+				for (int y = scores[i]; y >= 0; y--)
 				{
-					if (printALine == 15)
+					if (printALine == 15 || i%10 == 0 && i!=0)
 					{
-						output.printf("\n%5d", y);
+						if (print)
+							output.printf("\n%5d", i);
 						printALine = 0;
+						print = false;
+
 					}
 					else
 					{
-						output.printf("%-5d", y);
+						print = true;
+						output.printf("%5d", i);
 						printALine++;
 					}
 				}
 			}
-			output.println("\nA (90-100): " + grades[0] + "\t" + (double)grades[0]/total);
-			output.println("B (80-89): " + grades[1] + "\t" + (double)grades[1]/total);
-			output.println("C (70-79): " + grades[2] + "\t" + (double)grades[2]/total);
-			output.println("D (60-69): " + grades[3] + "\t" + (double)grades[3]/total);
-			output.println("F (0-59): " + grades[4] + "\t" + (double)grades[4]/total);
+
+			output.printf("\n\nA (90-100): %2d\t%2f%%\n", grades[0], (double)grades[0]/total);
+			output.printf("B (80-89): %2d\t%2f%%\n", grades[1], (double)grades[1]/total);
+			output.printf("C (70-79): %2d\t%2f%%\n", grades[2], (double)grades[2]/total);
+			output.printf("D (60-69): %2d\t%2f%%\n", grades[3], (double)grades[3]/total);
+			output.printf("F (0-59): %2d\t%2f%%\n", grades[4], (double)grades[4]/total);
 
 			output.close();
 		}
